@@ -11,9 +11,11 @@
   "dependencies": {
     "@heroicons/react": "^2.1.4",
     "heroicons": "^2.1.4",
+    "lucide-react": "^0.407.0",
     "next": "14.2.4",
     "react": "^18",
-    "react-dom": "^18"
+    "react-dom": "^18",
+    "react-input-emoji": "^5.9.0"
   },
   "devDependencies": {
     "@types/node": "^20",

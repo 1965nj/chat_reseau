@@ -1,5 +1,5 @@
 "use client";
-import React from 'react'
+import React, { useState } from 'react'
 import {
   CameraIcon,
   FaceSmileIcon,
@@ -12,10 +12,45 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import { MicrophoneIcon } from "@heroicons/react/20/solid";
+import  InputEmoji  from "react-input-emoji";
 import { useEffect, useRef } from "react";
 
-function RightComponent() {
+type Contact = {
+  id: number;
+  name: string;
+  imageUrl: string;
+  messages: string[];
+  lastMessageAt: string;
+};
+
+interface RightComponentProps {
+  selectedContact: Contact | null;
+}
+
+function RightComponent({ selectedContact }: RightComponentProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
+
+  const [text, setText] = useState('');
+  const [selectedImage, setSelectedImage] = useState<File | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  console.log(text)
+
+  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files && event.target.files[0]) {
+      setSelectedImage(event.target.files[0]);
+    }
+  };
+
+  const handleSendMessage = () => {
+    // Envoyer le message avec la photo si elle existe
+    if (selectedImage) {
+      // Envoyer le message avec la photo
+    } else {
+      // Envoyer le message sans photo
+    }
+    setText('');
+    setSelectedImage(null);
+  };
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -24,38 +59,38 @@ function RightComponent() {
   }, []);
 
   return (
-    <div className="col-span-6 min-[1px]:col-span-6 xl:col-span-8 m-4">
-        <div className="chat-box__content-head p-4">
+    <div className="col-span-6 min-[1px]:col-span-6 xl:col-span-8 p-4 grid grid-rows-[50px_aut_50px] h-screen">
+        <div className="chat-box__content-head p-4  bg-gray-200">
           <div className="flex items-center justify-between flex-wrap gap-4">
             <div className="flex items-center gap-4">
-              <div className="w-15 h-5 relative z-[1] rounded-full shrink-0">
+              <div className="w-15 h-15 relative z-[1] rounded-full shrink-0">
                 <Image
                   width={60}
                   height={60}
-                  src="/img/user-5.PNG"
+                  src={selectedContact?.imageUrl!}
                   alt="image"
                   className="w-full h-full object-fit-cover overflow-hidden rounded-full"
                 />
                 <span className="inline-block w-4 h-4 rounded-full bg-[#37D27A] absolute end-0 bottom-0 z-[1]"></span>
               </div>
-              <h5 className="mb-0 flex-grow clr-neutral-500">Peter Parker</h5>
+              <h5 className="mb-0 flex-grow clr-neutral-500 text-3xl font-medium">{selectedContact?.name}</h5>
             </div>
             <div className="flex gap-3 items-center justify-content-end flex-wrap">
               <Link
                 href="#"
                 className="link inline-block shrink-0 text-[var(--neutral-700)] hover:text-primary">
-                <PhoneIcon className="w-6 h-6" />
+                <PhoneIcon className="w-8 h-8" />
               </Link>
               <Link
                 href="#"
                 className="link inline-block shrink-0 text-[var(--neutral-700)] hover:text-primary">
-                <VideoCameraIcon className="w-6 h-6" />
+                <VideoCameraIcon className="w-8 h-8" />
               </Link>
             </div>
           </div>
         </div>
         <div
-          className="max-h-[481px] scrollbar-hide bg-[#EAEBFD] p-4 overflow-y-auto"
+          className="max-h-full scrollbar-hide bg-[#EAEBFD] p-4 overflow-y-auto"
           style={{ overflowY: "auto" }}
           ref={scrollRef}>
           <ul className="flex flex-col gap-6">
@@ -65,7 +100,7 @@ function RightComponent() {
                   <Image
                     width={48}
                     height={48}
-                    src="/img/user-5.PNG"
+                    src={selectedContact?.imageUrl!}
                     alt="image"
                     className="w-full h-full object-fit-cover"
                   />
@@ -101,7 +136,7 @@ function RightComponent() {
                   <Image
                     width={48}
                     height={48}
-                    src="/img/user-5.PNG"
+                    src={selectedContact?.imageUrl!}
                     alt="image"
                     className="w-full h-full object-fit-cover"
                   />
@@ -137,7 +172,7 @@ function RightComponent() {
                   <Image
                     width={48}
                     height={48}
-                    src="/img/user-5.PNG"
+                    src={selectedContact?.imageUrl!}
                     alt="image"
                     className="w-full h-full object-fit-cover"
                   />
@@ -173,7 +208,7 @@ function RightComponent() {
                   <Image
                     width={48}
                     height={48}
-                    src="/img/user-5.PNG"
+                    src={selectedContact?.imageUrl!}
                     alt="image"
                     className="w-full h-full object-fit-cover"
                   />
@@ -211,44 +246,75 @@ function RightComponent() {
               <Link
                 href="#"
                 className="link inline-block clr-neutral-500 hover:text-primary">
-                <PlusCircleIcon className="w-6 h-6" />
+                <PlusCircleIcon className="w-8 h-8" />
               </Link>
             </div>
             <div className="shrink-0">
               <Link
                 href="#"
                 className="link inline-block clr-neutral-500 hover:text-primary">
-                <MicrophoneIcon className="w-6 h-6" />
+                <MicrophoneIcon className="w-8 h-8" />
               </Link>
             </div>
             <div className="shrink-0">
-              <Link
-                href="#"
-                className="link inline-block clr-neutral-500 hover:text-primary">
-                <CameraIcon className="w-6 h-6" />
-              </Link>
-            </div>
-            <div className="shrink-0">
-              <Link
-                href="#"
-                className="link inline-block clr-neutral-500 hover:text-primary">
-                <FaceSmileIcon className="w-6 h-6" />
-              </Link>
-            </div>
+            <button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              className="link inline-block clr-neutral-500 hover:text-primary"
+            >
+              <CameraIcon className="w-8 h-8" />
+            </button>
+            <input
+              type="file"
+              ref={fileInputRef}
+              onChange={handleImageUpload}
+              className="hidden"
+            />
           </div>
-          <div className="flex items-center flex-grow p-2 border border-neutral-30 bg-[var(--bg-2)] rounded-full">
+          <div className="shrink-0 w-[755%] h-14">
+            {selectedImage ? (
+              <div className="flex items-center gap-2">
+                <Image
+                  src={URL.createObjectURL(selectedImage)}
+                  alt="Selected image"
+                  width={40}
+                  height={40}
+                  className="rounded-md"
+                />
+                <InputEmoji
+                  value={text}
+                  onChange={setText}
+                  cleanOnEnter
+                  shouldReturn
+                  shouldConvertEmojiToImage
+                  placeholder="Type a message"
+                />
+              </div>
+            ) : (
+              <InputEmoji
+                value={text}
+                onChange={setText}
+                cleanOnEnter
+                shouldReturn
+                shouldConvertEmojiToImage
+                placeholder="Type a message"
+              />
+            )}
+          </div>
+        </div>
+          {/* <div className="flex items-center ml-5 flex-grow p-2 border border-neutral-30 bg-[var(--bg-2)] rounded-full">
             <input
               type="text"
               placeholder="Type message..."
               className="w-full bg-transparent focus:outline-none border-0 flex-grow"
             />
-            </div>
-            <div className="grid place-content-center w-10 h-5 rounded-full border-1 bg-primary text-black shrink-0">
+          </div> */}
+          {/* <div className="grid place-content-center w-10 h-8 rounded-full border-1 bg-primary text-black shrink-0">
             <button
               type="button">
-              <PaperAirplaneIcon className="w-10 h-5" />
+              <PaperAirplaneIcon className="w-10 h-8" />
             </button>
-          </div>
+          </div> */}
         </div>
       </div>
   )
